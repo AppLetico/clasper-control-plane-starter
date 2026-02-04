@@ -1,0 +1,17 @@
+{
+  "id": "sample-plugin",
+  "name": "Sample Plugin",
+  "version": "0.1.0",
+  "entry": "plugin.py",
+  "kind": "memory",
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "greeting": { "type": "string" }
+    },
+    "additionalProperties": false
+  },
+  "uiHints": {
+    "greeting": { "label": "Greeting" }
+  }
+}

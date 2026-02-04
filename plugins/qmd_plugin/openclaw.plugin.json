@@ -1,0 +1,20 @@
+{
+  "id": "qmd-plugin",
+  "name": "QMD Plugin",
+  "version": "0.1.0",
+  "entry": "plugin.py",
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "command": { "type": "string" },
+      "default_mode": { "type": "string", "enum": ["search", "vsearch", "query"] },
+      "timeout_seconds": { "type": "number" }
+    },
+    "additionalProperties": false
+  },
+  "uiHints": {
+    "command": { "label": "QMD Command Path" },
+    "default_mode": { "label": "Default Search Mode" },
+    "timeout_seconds": { "label": "Timeout (seconds)" }
+  }
+}

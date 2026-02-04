@@ -1,0 +1,34 @@
+{
+  "plugins": {
+    "enabled": true,
+    "allow": ["prompt-guard", "qmd-plugin", "sample-plugin"],
+    "deny": [],
+    "entries": {
+      "prompt-guard": {
+        "enabled": true,
+        "config": {
+          "denylist": ["BLOCK_ME"],
+          "case_sensitive": false
+        }
+      },
+      "qmd-plugin": {
+        "enabled": true,
+        "config": {
+          "command": "qmd",
+          "default_mode": "search",
+          "timeout_seconds": 30
+        }
+      },
+      "sample-plugin": {
+        "enabled": true,
+        "config": {
+          "greeting": "hello"
+        }
+      }
+    },
+    "slots": {},
+    "load": {
+      "paths": ["./plugins/prompt_guard", "./plugins/qmd_plugin", "./plugins/sample_plugin"]
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "id": "prompt-guard",
+  "name": "Prompt Guard",
+  "version": "0.1.0",
+  "entry": "plugin.py",
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "denylist": { "type": "array", "items": { "type": "string" } },
+      "case_sensitive": { "type": "boolean" }
+    },
+    "additionalProperties": false
+  },
+  "uiHints": {
+    "denylist": { "label": "Blocked Patterns" },
+    "case_sensitive": { "label": "Case Sensitive" }
+  }
+}
