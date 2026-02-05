@@ -81,3 +81,18 @@ def post_document(payload: DocumentIn, actor=Depends(require_actor)):
         raise HTTPException(status_code=409, detail="idempotency_key conflict")
     _run_hooks("after_document_post", {"user_id": actor["user_id"], "document": document})
     return document
+
+
+@app.get("/api/tools")
+def list_tools(actor=Depends(require_actor)):
+    tools = list(registry.tools.values())
+    return {"tools": tools}
+
+
+@app.post("/api/tools/{name}")
+def execute_tool(name: str, payload: Dict[str, Any], actor=Depends(require_actor)):
+    if name == "echo":
+        args = payload.get("arguments") or {}
+        return {"message": args.get("message")}
+
+    raise HTTPException(status_code=404, detail="tool not found")
