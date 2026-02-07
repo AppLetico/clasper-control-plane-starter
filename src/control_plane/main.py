@@ -1,4 +1,9 @@
+from contextlib import asynccontextmanager
+import logging
+import sys
+
 from fastapi import Depends, FastAPI, HTTPException
+from loguru import logger
 from typing import Dict, Any
 
 from .auth import require_actor
@@ -8,7 +13,53 @@ from .store import InMemoryStore
 from .plugins.loader import load_plugins
 from .plugins.runtime import PluginBlocked
 
-app = FastAPI()
+# ---------------------------------------------------------------------------
+# Loguru — intercept all stdlib logging (uvicorn, etc.) into loguru
+# ---------------------------------------------------------------------------
+
+class _InterceptHandler(logging.Handler):
+    """Route stdlib log records into loguru."""
+    def emit(self, record: logging.LogRecord) -> None:
+        try:
+            level = logger.level(record.levelname).name
+        except ValueError:
+            level = record.levelno
+        logger.opt(depth=6, exception=record.exc_info).log(level, record.getMessage())
+
+logging.basicConfig(handlers=[_InterceptHandler()], level=logging.INFO, force=True)
+for _name in ("uvicorn", "uvicorn.error", "uvicorn.access"):
+    logging.getLogger(_name).handlers = [_InterceptHandler()]
+
+# ---------------------------------------------------------------------------
+# Startup banner
+# ---------------------------------------------------------------------------
+STARTUP_BANNER = r"""
+   ____ _
+  / ___| | __ _ ___ _ __   ___ _ __
+ | |   | |/ _` / __| '_ \ / _ \ '__|
+ | |___| | (_| \__ \ |_) |  __/ |
+  \____|_|\__,_|___/ .__/ \___|_|
+                   |_|
+  🎛️  Clasper Control Plane — Mission Control API
+  ───────────────────────────────────────────────
+"""
+
+_is_tty = sys.stdout.isatty()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    if _is_tty:
+        base = f"http://127.0.0.1:{cfg.port}"
+        print("\033[36m" + STARTUP_BANNER + "\033[0m", end="")
+        print(f"  \033[1m▶\033[0m  API: \033[4m{base}\033[0m")
+        print(f"  \033[1m▶\033[0m  Health: \033[4m{base}/health\033[0m\n")
+    logger.info("Control plane ready — {} plugin(s) loaded", len(registry.hooks))
+    yield
+    logger.info("Shutting down")
+
+
+app = FastAPI(lifespan=lifespan)
 store = InMemoryStore()
 cfg = load_config()
 registry = load_plugins(cfg)
