@@ -2,7 +2,12 @@
  
  Minimal Control Plane backend that implements the required Clasper contract endpoints and an OpenClaw-style plugin system.
  
- ## Quickstart
+## Quickstart
+
+**This starter implements the Control Plane contract only.**  
+**It is not a trust root and is not authoritative for governance.**  
+**It cannot mint approval tokens.**  
+**It cannot sign evidence or issue externally verifiable attestations (External Proof).**
  
  ```bash
  python -m venv .venv
